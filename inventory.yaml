@@ -1,0 +1,19 @@
+all:
+  children:
+    bigip:
+      children:
+        bigipve:
+          hosts:
+            192.168.1.133:
+        bigip4200:
+          hosts:
+            10.192.87.20:
+        bigip10200:
+          hosts:
+            10.192.87.60:
+            10.192.87.61:
+      vars:
+        bigip_username: admin
+        bigip_password: admin
+        ansible_user: root
+        ansible_ssh_pass: default
