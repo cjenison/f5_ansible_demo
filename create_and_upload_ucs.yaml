@@ -3,6 +3,9 @@
   connection: local
 
   tasks:
+      - debug: var=ansible_date_time
+
+      - debug: msg="the current date is {{ ansible_date_time.date }}"
       - name: Get all of the facts from my BIG-IP
         bigip_facts:
             user: "admin"
