@@ -1,0 +1,10 @@
+- name: Create BIG-IP UCS File and Upload it to server; then delete on BIG-IP
+  hosts: bigipve
+  connection: local
+
+  tasks:
+      - name: Get all of the facts from my BIG-IP
+        bigip_facts:
+            user: "admin"
+            password: "admin"
+            include: "system_info"
