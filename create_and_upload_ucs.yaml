@@ -8,6 +8,9 @@
       - debug: msg="the current date is {{ ansible_date_time.date }}"
       - name: Get all of the facts from my BIG-IP
         bigip_facts:
+            server: "{{ inventory_hostname }}"
             user: "admin"
             password: "admin"
             include: "system_info"
+            validate_certs: "false"
+
