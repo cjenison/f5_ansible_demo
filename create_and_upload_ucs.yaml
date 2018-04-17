@@ -1,11 +1,11 @@
 - name: Create BIG-IP UCS File and Upload it to server; then delete on BIG-IP
   hosts: bigipve
-  connection: local
 
   tasks:
       - debug: var=ansible_date_time
 
       - debug: msg="the current date is {{ ansible_date_time.date }}"
+
       - name: Get all of the facts from my BIG-IP
         bigip_facts:
             server: "{{ inventory_hostname }}"
@@ -13,4 +13,12 @@
             password: "admin"
             include: "system_info"
             validate_certs: "false"
+        delegate_to: localhost
 
+      - name: Create UCS on BIG-IP
+        command: /usr/bin/tmsh save sys ucs {{ inventory_hostname }}_{{ ansible_date_time.date }}.ucs
+
+      - name: Fetch UCS to Local Machine
+        fetch:
+          src: /var/local/ucs/{{ inventory_hostname }}_{{ ansible_date_time.date }}.ucs
+          dest: ucs/
