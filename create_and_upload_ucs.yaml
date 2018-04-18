@@ -11,7 +11,7 @@
             server: "{{ inventory_hostname }}"
             user: "admin"
             password: "admin"
-            include: "system_info"
+            include: system_info,device
             validate_certs: "false"
         delegate_to: localhost
 
