@@ -1,0 +1,12 @@
+- name: Create BIG-IP UCS File and Upload it to server; then delete on BIG-IP
+  hosts: bigip10200
+
+  tasks:
+      - name: Set NTP Server to pool.ntp.org
+        bigip_configsync_action:
+            server: "{{ inventory_hostname }}"
+            sync_most_recent_to_device: "yes"
+            user: "admin"
+            password: "admin"
+            validate_certs: "false"
+        delegate_to: localhost
