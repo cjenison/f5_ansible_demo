@@ -1,22 +1,33 @@
-- name: Create BIG-IP UCS File and Upload it to server; then delete on BIG-IP
+- name: Create LTM Pool, Add 2 Members and then create 2 LTM Virtuals (80/443) that reference pool
   hosts: bigip
 
   tasks:
-      - name: Get all of the facts from my BIG-IP
+      - name: Create Pool example-pool
         bigip_pool:
+            name: example-pool
+            partition: Common
+            lb_method: round-robin
+            monitors:
+              - tcp_half_open
             server: "{{ inventory_hostname }}"
-            user: "admin"
-            password: "admin"
-            include: system_info,device
+            user: "{{ hostvars[inventory_hostname].user }}"
+            password: "{{ hostvars[inventory_hostname].password }}"
+            state: present
             validate_certs: "false"
         delegate_to: localhost
 
-      - debug: msg="the system name is {{ device }}"
-
-      - name: Create UCS on BIG-IP
-        command: /usr/bin/tmsh save sys ucs {{ system_info.system_information.host_name }}_{{ ansible_date_time.date }}.ucs
-
-      - name: Fetch UCS to Local Machine
-        fetch:
-          src: /var/local/ucs/{{ system_info.system_information.host_name }}_{{ ansible_date_time.date }}.ucs
-          dest: ucs/
+      - name: Add Members to Pool
+        bigip_pool_member:
+            pool: example-pool
+            partition: Common
+            host: "{{ hostvars[inventory_hostname].prefix }}.{{ item.addr }}"
+            port: 80
+            server: "{{ inventory_hostname }}"
+            user: "{{ hostvars[inventory_hostname].user }}"
+            password: "{{ hostvars[inventory_hostname].password }}"
+            state: present
+            validate_certs: "false"
+        with_items:
+          - addr: "2.1"
+          - addr: "2.2"
+        delegate_to: localhost
