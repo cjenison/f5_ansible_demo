@@ -1,4 +1,4 @@
-- name: Create BIG-IP UCS File and Upload it to server; then delete on BIG-IP
+- name: Set NTP Server to pool.ntp.org
   hosts: bigip
 
   tasks:
@@ -7,7 +7,7 @@
             server: "{{ inventory_hostname }}"
             ntp_servers:
               - pool.ntp.org
-            user: "admin"
-            password: "admin"
+            user: "{{ hostvars[inventory_hostname].user }}"
+            password: "{{ hostvars[inventory_hostname].password }}"
             validate_certs: "false"
         delegate_to: localhost

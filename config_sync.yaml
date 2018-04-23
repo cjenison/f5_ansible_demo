@@ -1,12 +1,29 @@
-- name: Create BIG-IP UCS File and Upload it to server; then delete on BIG-IP
+- name: Gather Facts and then pull most recent config
   hosts: bigip10200
 
   tasks:
-      - name: Set NTP Server to pool.ntp.org
-        bigip_configsync_action:
+      - name: Get all of the facts from my BIG-IP
+        bigip_facts:
+            server: "{{ inventory_hostname }}"
+            user: "{{ hostvars[inventory_hostname].user }}"
+            password: "{{ hostvars[inventory_hostname].password }}"
+            include: device_group
+            validate_certs: "false"
+        delegate_to: localhost
+
+      - name: determine sync-failover device group
+        set_fact:
+          sync_failover_dg: "{{ item }}"
+        when: device_group[item]['type'] == "DGT_FAILOVER"
+        with_items: "{{ device_group.keys() }}"
+        delegate_to: localhost
+
+      - name: Pull most recent device config to each system
+        bigip_configsync_actions:
             server: "{{ inventory_hostname }}"
             sync_most_recent_to_device: "yes"
-            user: "admin"
-            password: "admin"
+            device_group: "{{ sync_failover_dg.split('/')[2] }}"
+            user: "{{ hostvars[inventory_hostname].user }}"
+            password: "{{ hostvars[inventory_hostname].password }}"
             validate_certs: "false"
         delegate_to: localhost

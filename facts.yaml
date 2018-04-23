@@ -1,5 +1,5 @@
 - name: Test bigip_facts
-  hosts: bigipve
+  hosts: bigip
   connection: local
  
   tasks:
@@ -8,5 +8,6 @@
             server: "{{ inventory_hostname }}"
             user: "admin"
             password: "admin"
-            include: "system_info"
+            include: system_info,device,software,provision,key
             validate_certs: "false"
+      - debug: msg="the hostname is {{ system_info.system_information.host_name }}"
