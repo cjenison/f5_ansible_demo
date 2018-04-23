@@ -1,5 +1,5 @@
 - name: Create BIG-IP UCS File and Upload it to server; then delete on BIG-IP
-  hosts: bigip
+  hosts: bigipve
 
   tasks:
       - name: Get all of the facts from my BIG-IP
@@ -20,3 +20,8 @@
         fetch:
           src: /var/local/ucs/{{ system_info.system_information.host_name }}_{{ ansible_date_time.date }}.ucs
           dest: ucs/
+
+      - name: Delete UCS on BIG-IP
+        file:
+          state: absent
+          path: /var/local/ucs/{{ system_info.system_information.host_name }}_{{ ansible_date_time.date }}.ucs
