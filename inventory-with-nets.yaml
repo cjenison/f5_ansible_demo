@@ -1,0 +1,28 @@
+all:
+  children:
+    bigip:
+      children:
+        bigipve:
+          hosts:
+            192.168.133.133:
+          vars:
+            prefix: "10.1"
+        bigip4200:
+          hosts:
+            10.192.87.20:
+          vars:
+            prefix: "10.2"
+        bigip10200:
+          hosts:
+            10.192.87.60:
+            10.192.87.61:
+          vars:
+            prefix: "10.3"
+      vars:
+        user: admin
+        password: admin
+        bigip_username: admin
+        bigip_password: admin
+        ansible_user: root
+        ansible_ssh_pass: default
+        validate_certs: "false"

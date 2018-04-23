@@ -1,0 +1,22 @@
+- name: Create BIG-IP UCS File and Upload it to server; then delete on BIG-IP
+  hosts: bigip
+
+  tasks:
+      - name: Get all of the facts from my BIG-IP
+        bigip_pool:
+            server: "{{ inventory_hostname }}"
+            user: "admin"
+            password: "admin"
+            include: system_info,device
+            validate_certs: "false"
+        delegate_to: localhost
+
+      - debug: msg="the system name is {{ device }}"
+
+      - name: Create UCS on BIG-IP
+        command: /usr/bin/tmsh save sys ucs {{ system_info.system_information.host_name }}_{{ ansible_date_time.date }}.ucs
+
+      - name: Fetch UCS to Local Machine
+        fetch:
+          src: /var/local/ucs/{{ system_info.system_information.host_name }}_{{ ansible_date_time.date }}.ucs
+          dest: ucs/

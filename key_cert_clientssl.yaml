@@ -1,0 +1,39 @@
+- name: Push SSL Key, Cert and Client-SSL profile to BIG-IP
+  hosts: bigip10200
+
+  tasks:
+      - name: Push SSL Key
+        bigip_ssl_key:
+            name: chad
+            server: "{{ inventory_hostname }}"
+            user: "{{ hostvars[inventory_hostname].user }}"
+            password: "{{ hostvars[inventory_hostname].password }}"
+            state: present
+            content: "{{ lookup('file', 'ssl/chad-key.pem') }}"
+            validate_certs: "false"
+        delegate_to: localhost
+
+      - name: Push SSL Cert
+        bigip_ssl_certificate:
+            name: chad
+            server: "{{ inventory_hostname }}"
+            user: "{{ hostvars[inventory_hostname].user }}"
+            password: "{{ hostvars[inventory_hostname].password }}"
+            state: present
+            content: "{{ lookup('file', 'ssl/chad-cert.pem') }}"
+            validate_certs: "false"
+        delegate_to: localhost
+
+      - name: Create Client SSL Profile
+        bigip_profile_client_ssl:
+            name: chad-clientssl
+            server: "{{ inventory_hostname }}"
+            user: "{{ hostvars[inventory_hostname].user }}"
+            password: "{{ hostvars[inventory_hostname].password }}"
+            state: present
+            ciphers: "DEFAULT"
+            cert_key_chain:
+              - cert: chad
+                key: chad
+            validate_certs: "false"
+        delegate_to: localhost
