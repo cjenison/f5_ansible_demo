@@ -1,5 +1,5 @@
 - name: Gather Facts and then pull most recent config
-  hosts: bigip10200
+  hosts: bigip
 
   tasks:
       - name: Get all of the facts from my BIG-IP
@@ -18,10 +18,10 @@
         with_items: "{{ device_group.keys() }}"
         delegate_to: localhost
 
-      - name: Pull most recent device config to each system
-        bigip_configsync_actions:
+      - name: Pull Config From Group
+        bigip_configsync_action:
             server: "{{ inventory_hostname }}"
-            sync_most_recent_to_device: "yes"
+            sync_most_recent_to_device: yes
             device_group: "{{ sync_failover_dg.split('/')[2] }}"
             user: "{{ hostvars[inventory_hostname].user }}"
             password: "{{ hostvars[inventory_hostname].password }}"
