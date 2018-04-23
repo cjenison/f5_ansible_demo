@@ -1,5 +1,5 @@
 - name: Push SSL Key, Cert and Client-SSL profile to BIG-IP
-  hosts: bigip10200
+  hosts: bigip
 
   tasks:
       - name: Push SSL Key
