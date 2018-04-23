@@ -31,3 +31,40 @@
           - addr: "2.1"
           - addr: "2.2"
         delegate_to: localhost
+
+      - name: Create port 80 virtual server
+        bigip_virtual_server:
+            pool: example-vs-http
+            partition: Common
+            destination: "{{ hostvars[inventory_hostname].prefix }}.1.1"
+            port: 80
+            profiles:
+              - http
+              - tcp
+            irules:
+              - _sys_https_redirect
+            server: "{{ inventory_hostname }}"
+            user: "{{ hostvars[inventory_hostname].user }}"
+            password: "{{ hostvars[inventory_hostname].password }}"
+            state: present
+            validate_certs: "false"
+        delegate_to: localhost
+
+      - name: Create port 443 virtual server
+        bigip_virtual_server:
+            pool: example-vs-https
+            partition: Common
+            destination: "{{ hostvars[inventory_hostname].prefix }}.1.1"
+            port: 443
+            pool: example-pool
+            snat: Automap
+            profiles:
+              - clientssl
+              - http
+              - tcp
+            server: "{{ inventory_hostname }}"
+            user: "{{ hostvars[inventory_hostname].user }}"
+            password: "{{ hostvars[inventory_hostname].password }}"
+            state: present
+            validate_certs: "false"
+        delegate_to: localhost
