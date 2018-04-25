@@ -1,5 +1,5 @@
 - name: Create BIG-IP UCS File and Upload it to server; then delete on BIG-IP
-  hosts: bigipve
+  hosts: bigip
 
   tasks:
       - name: Get all of the facts from my BIG-IP
@@ -11,8 +11,6 @@
             validate_certs: "false"
         delegate_to: localhost
 
-      - debug: msg="the system name is {{ device }}"
-
       - name: Create UCS on BIG-IP
         command: /usr/bin/tmsh save sys ucs {{ system_info.system_information.host_name }}_{{ ansible_date_time.date }}.ucs
 
@@ -20,6 +18,7 @@
         fetch:
           src: /var/local/ucs/{{ system_info.system_information.host_name }}_{{ ansible_date_time.date }}.ucs
           dest: ucs/
+          flat: yes
 
       - name: Delete UCS on BIG-IP
         file:
